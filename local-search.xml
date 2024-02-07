@@ -4,6 +4,85 @@
   
   
   <entry>
+    <title>跳跃游戏</title>
+    <link href="/2024/02/01/tiao-yue-you-xi/"/>
+    <url>/2024/02/01/tiao-yue-you-xi/</url>
+    
+    <content type="html"><![CDATA[<h3 id="跳跃问题I"><a href="#跳跃问题I" class="headerlink" title="跳跃问题I"></a>跳跃问题I</h3><pre><code class="hljs">给你一个非负整数数组 nums ，你最初位于数组的 第一个下标 。数组中的每个元素代表你在该位置可以跳跃的最大长度。判断你是否能够到达最后一个下标，如果可以，返回 true ；否则，返回 false 。</code></pre><hr><h4 id="贪心思路"><a href="#贪心思路" class="headerlink" title="贪心思路"></a>贪心思路</h4><p>每走一步就计算当前能够到达的最大位置（位置<code>i</code>加上<code>nums[i]</code>，如果比当前的最大位置大，则更新最大位置），持续遍历数组到最大位置（这里与官方题解不同，官方题解遍历整个数组，这里如果遍历到不可到达的位置直接<code>return false</code>）如果最大位置大于等于数组长度，则<code>return true</code></p><h4 id="代码如下"><a href="#代码如下" class="headerlink" title="代码如下"></a>代码如下</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">canJump</span><span class="hljs-params">(<span class="hljs-type">int</span>[] nums)</span> &#123;<br>        <span class="hljs-type">int</span> n=nums.length;<br>        <span class="hljs-type">int</span> maxPoint=<span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;maxPoint;i++)&#123;<br>            <span class="hljs-keyword">if</span>(maxPoint&lt;i+<span class="hljs-number">1</span>+nums[i])&#123;<br>                maxPoint=i+<span class="hljs-number">1</span>+nums[i];<br>            &#125;<br>            <span class="hljs-keyword">if</span>(maxPoint&gt;=n)&#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br></code></pre></td></tr></table></figure><h3 id="跳跃问题II"><a href="#跳跃问题II" class="headerlink" title="跳跃问题II"></a>跳跃问题II</h3><p>给定一个长度为 <code>n</code> 的 <strong>0 索引</strong>整数数组 <code>nums</code>。初始位置为 <code>nums[0]</code>。</p><p>每个元素 <code>nums[i]</code> 表示从索引 <code>i</code> 向前跳转的最大长度。换句话说，如果你在 <code>nums[i]</code> 处，你可以跳转到任意 <code>nums[i + j]</code> 处:</p><ul><li><code>0 &lt;= j &lt;= nums[i]</code> </li><li><code>i + j &lt; n</code></li></ul><p>返回到达 <code>nums[n - 1]</code> 的最小跳跃次数。生成的测试用例可以到达 <code>nums[n - 1]</code>。</p><hr><h4 id="贪心思路-1"><a href="#贪心思路-1" class="headerlink" title="贪心思路"></a>贪心思路</h4><p>每一步都要求最优解，关键在于如何计算次数</p><p>这里的解决方法是引入<code>end</code>用于储存局部最优解的位置，当<code>end==i</code>时代表需要向下再走一步，<code>step++</code></p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">jump</span><span class="hljs-params">(<span class="hljs-type">int</span>[] nums)</span> &#123;<br>       <span class="hljs-type">int</span> n=nums.length;<br>       <span class="hljs-type">int</span> end=<span class="hljs-number">0</span>;<br>       <span class="hljs-type">int</span> steps=<span class="hljs-number">0</span>;<br>       <span class="hljs-type">int</span> max=<span class="hljs-number">0</span>;<br>       <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;n-<span class="hljs-number">1</span>;i++)&#123;<br>            <span class="hljs-keyword">if</span>(max&lt;i+nums[i])&#123;<br>                max=i+nums[i];<br>           &#125;<br>               <span class="hljs-keyword">if</span>(i==end)&#123;<br>                   end=max;<br>                   steps++;<br>               &#125;<br>       &#125;<br>       <span class="hljs-keyword">return</span> steps;<br>   &#125;<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>leetcode面试150</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>算法</tag>
+      
+      <tag>贪心</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>股票问题</title>
+    <link href="/2024/02/01/gu-piao-wen-ti/"/>
+    <url>/2024/02/01/gu-piao-wen-ti/</url>
+    
+    <content type="html"><![CDATA[<h4 id="股票II"><a href="#股票II" class="headerlink" title="股票II"></a>股票II</h4><pre><code class="hljs">  给你一个整数数组 prices ，其中 prices[i] 表示某支股票第 i 天的价格。  在每一天，你可以决定是否购买和/或出售股票。你在任何时候 最多 只能持有 一股 股票。你也可以先购买，然后在 同一天 出售。  返回你能获得的 最大 利润 。</code></pre><h5 id="思考状态转移"><a href="#思考状态转移" class="headerlink" title="思考状态转移"></a>思考状态转移</h5><p>每一天有两种状态，可以选择持有现金OR持有股票<br>分别用<code>dp[i-1][0]</code>和<code>dp[i-1][1]</code>表示</p><p>每一天状态可以转移，也可以不动<br><img src="/img/pasted-0.png" alt="upload successful"></p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-comment">//动态规划方法</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">maxProfit</span><span class="hljs-params">(<span class="hljs-type">int</span>[] prices)</span> &#123;<br>        <span class="hljs-comment">//数组长度</span><br>        <span class="hljs-type">int</span> len=prices.length;<br>        <span class="hljs-comment">//0持有现金</span><br>        <span class="hljs-comment">//1持有股票</span><br>        <span class="hljs-comment">// 状态转移：0 → 1 → 0 → 1 → 0 → 1 → 0</span><br>        <span class="hljs-type">int</span>[][] dp = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[len][<span class="hljs-number">2</span>];<br>        <span class="hljs-comment">//第一天什么都不做，收益为0</span><br>        dp[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]=<span class="hljs-number">0</span>;<br>        <span class="hljs-comment">//第一天持有股票，收益为：亏第一天的股票钱</span><br>        dp[<span class="hljs-number">0</span>][<span class="hljs-number">1</span>]=-prices[<span class="hljs-number">0</span>];<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;len;i++)&#123;<br>        <span class="hljs-comment">//第i+1天持有现金，有两种情况（前一天也持有现金，前一天持有股票，今天卖了）</span><br>        dp[i][<span class="hljs-number">0</span>]=Math.max(dp[i-<span class="hljs-number">1</span>][<span class="hljs-number">0</span>],dp[i-<span class="hljs-number">1</span>][<span class="hljs-number">1</span>]+prices[i]);<br>        <span class="hljs-comment">//第i+1天持有股票，有两种情况（前一天也持有股票，前一天持有现金，今天买了股票）</span><br>        dp[i][<span class="hljs-number">1</span>]=Math.max(dp[i-<span class="hljs-number">1</span>][<span class="hljs-number">1</span>],dp[i-<span class="hljs-number">1</span>][<span class="hljs-number">0</span>]-prices[i]);<br>    &#125;<br>    <span class="hljs-comment">//最后一天不持有股票的情况收益最高</span><br>    <span class="hljs-keyword">return</span> dp[len-<span class="hljs-number">1</span>][<span class="hljs-number">0</span>];<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>leetcode面试150</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>算法</tag>
+      
+      <tag>动态规划</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>如何写hexo文章</title>
+    <link href="/2024/02/01/ru-he-xie-hexo-wen-zhang/"/>
+    <url>/2024/02/01/ru-he-xie-hexo-wen-zhang/</url>
+    
+    <content type="html"><![CDATA[<h1 id="hexo知识备份"><a href="#hexo知识备份" class="headerlink" title="hexo知识备份"></a>hexo知识备份</h1><h2 id="1-hexo常用命令"><a href="#1-hexo常用命令" class="headerlink" title="1.hexo常用命令"></a>1.hexo常用命令</h2><figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs haxe"><span class="hljs-meta"># 开启服务</span><br>hexo server<br><br><span class="hljs-meta"># 新建文章</span><br>hexo <span class="hljs-keyword">new</span> <span class="hljs-type">a</span><br><br><span class="hljs-meta"># 新建草稿</span><br>hexo <span class="hljs-keyword">new</span> <span class="hljs-type">draft</span> b<br><br><span class="hljs-meta"># 发布草稿成为文章</span><br>hexo publish b<br><br><span class="hljs-meta"># 普通页面</span><br>hexo <span class="hljs-keyword">new</span> <span class="hljs-type">page</span> c<br><br><span class="hljs-meta"># 清空缓存</span><br>hexo clean<br><span class="hljs-meta"># 生成静态文章</span><br>hexo generate 或者是 hexo g<br><span class="hljs-meta"># 部署文章</span><br>hexo deploy 或者是 hexo d<br></code></pre></td></tr></table></figure><h2 id="2-Front-matter"><a href="#2-Front-matter" class="headerlink" title="2.Front-matter"></a>2.Front-matter</h2><p>Front-matter 是文件最上方以 <code>---</code> 分隔的区域，用于指定个别文件的变量.</p><p>以下是预先定义的参数，您可在模板中使用这些参数值并加以利用。</p><table><thead><tr><th align="left">参数</th><th align="left">描述</th><th align="left">默认值</th></tr></thead><tbody><tr><td align="left"><code>layout</code></td><td align="left">布局</td><td align="left"><a href="https://hexo.io/zh-cn/docs/configuration#%E6%96%87%E7%AB%A0"><code>config.default_layout</code></a></td></tr><tr><td align="left"><code>title</code></td><td align="left">标题</td><td align="left">文章的文件名</td></tr><tr><td align="left"><code>date</code></td><td align="left">建立日期</td><td align="left">文件建立日期</td></tr><tr><td align="left"><code>updated</code></td><td align="left">更新日期</td><td align="left">文件更新日期</td></tr><tr><td align="left"><code>comments</code></td><td align="left">开启文章的评论功能</td><td align="left">true</td></tr><tr><td align="left"><code>tags</code></td><td align="left">标签（不适用于分页）</td><td align="left"></td></tr><tr><td align="left"><code>categories</code></td><td align="left">分类（不适用于分页）</td><td align="left"></td></tr><tr><td align="left"><code>permalink</code></td><td align="left">覆盖文章网址</td><td align="left"></td></tr><tr><td align="left"><code>excerpt</code></td><td align="left">Page excerpt in plain text. Use <a href="https://hexo.io/docs/tag-plugins#Post-Excerpt">this plugin</a> to format the text</td><td align="left"></td></tr><tr><td align="left"><code>disableNunjucks</code></td><td align="left">Disable rendering of Nunjucks tag <code>&#123;&#123; &#125;&#125;</code>&#x2F;<code>&#123;% %&#125;</code> and <a href="https://hexo.io/docs/tag-plugins">tag plugins</a> when enabled</td><td align="left"></td></tr><tr><td align="left"><code>lang</code></td><td align="left">Set the language to override <a href="https://hexo.io/docs/internationalization#Path">auto-detection</a></td><td align="left">Inherited from <code>_config.yml</code></td></tr></tbody></table>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术文档</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>博客</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>hello world</title>
     <link href="/2024/01/31/hello-world-1/"/>
     <url>/2024/01/31/hello-world-1/</url>
