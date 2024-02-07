@@ -4,6 +4,170 @@
   
     
     <entry>
+      <title>无重复字符的最长字符串</title>
+      <link href="/2024/02/07/wu-chong-fu-zi-fu-de-zui-chang-zi-fu-chuan/"/>
+      <url>/2024/02/07/wu-chong-fu-zi-fu-de-zui-chang-zi-fu-chuan/</url>
+      
+        <content type="html"><![CDATA[<h3 id="无重复字符的最长字符串"><a href="#无重复字符的最长字符串" class="headerlink" title="无重复字符的最长字符串"></a>无重复字符的最长字符串</h3><h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><p>给定一个字符串 <code>s</code> ，请你找出其中不含有重复字符的 <strong>最长子串</strong> 的长度。</p><p><strong>示例 1:</strong></p><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs makefile"><span class="hljs-section">输入: s = &quot;abcabcbb&quot;</span><br><span class="hljs-section">输出: 3 </span><br><span class="hljs-section">解释: 因为无重复字符的最长子串是 &quot;abc&quot;，所以其长度为 3。</span><br></code></pre></td></tr></table></figure><p><strong>示例 2:</strong></p><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs makefile"><span class="hljs-section">输入: s = &quot;bbbbb&quot;</span><br><span class="hljs-section">输出: 1</span><br><span class="hljs-section">解释: 因为无重复字符的最长子串是 &quot;b&quot;，所以其长度为 1。</span><br></code></pre></td></tr></table></figure><p><strong>示例 3:</strong></p><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs makefile"><span class="hljs-section">输入: s = &quot;pwwkew&quot;</span><br><span class="hljs-section">输出: 3</span><br><span class="hljs-section">解释: 因为无重复字符的最长子串是 &quot;wke&quot;，所以其长度为 3。</span><br>     请注意，你的答案必须是 子串 的长度，<span class="hljs-string">&quot;pwke&quot;</span> 是一个子序列，不是子串。<br></code></pre></td></tr></table></figure><h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">lengthOfLongestSubstring</span><span class="hljs-params">(String s)</span> &#123;<br>        HashMap&lt;Character, Integer&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();<br>        <span class="hljs-type">int</span> <span class="hljs-variable">maxLen</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<span class="hljs-comment">//用于记录最大不重复子串的长度</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">left</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<span class="hljs-comment">//滑动窗口左指针</span><br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; s.length() ; i++)<br>        &#123;<br>            <span class="hljs-comment">/**</span><br><span class="hljs-comment">            1、首先，判断当前字符是否包含在map中，如果不包含，将该字符添加到map（字符，字符在数组下标）,</span><br><span class="hljs-comment">             此时没有出现重复的字符，左指针不需要变化。此时不重复子串的长度为：i-left+1，与原来的maxLen比较，取最大值；</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">            2、如果当前字符 ch 包含在 map中，此时有2类情况：</span><br><span class="hljs-comment">             1）当前字符包含在当前有效的子段中，如：abca，当我们遍历到第二个a，当前有效最长子段是 abc，我们又遍历到a，</span><br><span class="hljs-comment">             那么此时更新 left 为 map.get(a)+1=1，当前有效子段更新为 bca；</span><br><span class="hljs-comment">             2）当前字符不包含在当前最长有效子段中，如：abba，我们先添加a,b进map，此时left=0，我们再添加b，发现map中包含b，</span><br><span class="hljs-comment">             而且b包含在最长有效子段中，就是1）的情况，我们更新 left=map.get(b)+1=2，此时子段更新为 b，而且map中仍然包含a，map.get(a)=0；</span><br><span class="hljs-comment">             随后，我们遍历到a，发现a包含在map中，且map.get(a)=0，如果我们像1）一样处理，就会发现 left=map.get(a)+1=1，实际上，left此时</span><br><span class="hljs-comment">             应该不变，left始终为2，子段变成 ba才对。</span><br><span class="hljs-comment"></span><br><span class="hljs-comment">             为了处理以上2类情况，我们每次更新left，left=Math.max(left , map.get(ch)+1).</span><br><span class="hljs-comment">             另外，更新left后，不管原来的 s.charAt(i) 是否在最长子段中，我们都要将 s.charAt(i) 的位置更新为当前的i，</span><br><span class="hljs-comment">             因此此时新的 s.charAt(i) 已经进入到 当前最长的子段中！</span><br><span class="hljs-comment">             */</span><br>            <span class="hljs-keyword">if</span>(map.containsKey(s.charAt(i)))<br>            &#123;<br>                left = Math.max(left , map.get(s.charAt(i))+<span class="hljs-number">1</span>);<br>            &#125;<br>            <span class="hljs-comment">//不管是否更新left，都要更新 s.charAt(i) 的位置！</span><br>            map.put(s.charAt(i) , i);<br>            maxLen = Math.max(maxLen , i-left+<span class="hljs-number">1</span>);<br>        &#125;<br>        <br>        <span class="hljs-keyword">return</span> maxLen;<br>    &#125;<br></code></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> leetcode面试150 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> 滑动窗口 </tag>
+            
+            <tag> 哈希 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>三数之和</title>
+      <link href="/2024/02/05/san-shu-zhi-he/"/>
+      <url>/2024/02/05/san-shu-zhi-he/</url>
+      
+        <content type="html"><![CDATA[<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>给你一个整数数组 <code>nums</code> ，判断是否存在三元组 <code>[nums[i], nums[j], nums[k]]</code> 满足 <code>i != j</code>、<code>i != k</code> 且 <code>j != k</code> ，同时还满足 <code>nums[i] + nums[j] + nums[k] == 0</code> 。请</p><p>你返回所有和为 <code>0</code> 且不重复的三元组。</p><h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><p>本题重点为<strong>不重复</strong> ，暴力解决直接考虑三重循环，但是大概率超时。本题其实相当与在一层循环中实现两数之和问题，所以考虑使用双指针解决时间复杂度减少到<em>O</em>(<em>N</em>^2)。</p><ol><li><p>首先对数组进行排序</p></li><li><p>然后进入第一层遍历，只需要下面两个指针的值<code>nums[m]+nums[j]=-nums[i]</code>即可解决问题</p></li></ol><p>「不重复」的本质是什么？我们保持三重循环的大框架不变，只需要保证：</p><p>第二重循环枚举到的元素不小于当前第一重循环枚举到的元素；</p><p>第三重循环枚举到的元素不小于当前第二重循环枚举到的元素。</p><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> List&lt;List&lt;Integer&gt;&gt; <span class="hljs-title function_">threeSum</span><span class="hljs-params">(<span class="hljs-type">int</span>[] nums)</span> &#123;<br>        List&lt;List&lt;Integer&gt;&gt; result = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;List&lt;Integer&gt;&gt;();<br>        Arrays.sort(nums);<br>        <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> nums.length;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>             <span class="hljs-comment">// 需要和上一次枚举的数不相同</span><br>            <span class="hljs-keyword">if</span> (i &gt; <span class="hljs-number">0</span> &amp;&amp; nums[i] == nums[i - <span class="hljs-number">1</span>]) &#123;<br>                <span class="hljs-keyword">continue</span>;<br>            &#125;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">j</span> <span class="hljs-operator">=</span> n - <span class="hljs-number">1</span>;<br>            <span class="hljs-type">int</span> <span class="hljs-variable">target</span> <span class="hljs-operator">=</span> -nums[i];<br>            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">m</span> <span class="hljs-operator">=</span> i + <span class="hljs-number">1</span>; m &lt; j; m++) &#123;<br>                <span class="hljs-keyword">while</span> (m &lt; j &amp;&amp; nums[m] + nums[j] &gt; target) &#123;<br>                    j--;<br>                &#125;<br>                <span class="hljs-comment">// 需要和上一次枚举的数不相同</span><br>                <span class="hljs-keyword">if</span> (j &lt; n - <span class="hljs-number">1</span> &amp;&amp; nums[j] == nums[j + <span class="hljs-number">1</span>]) &#123;<br>                    <span class="hljs-keyword">continue</span>;<br>                &#125;<br>                <span class="hljs-comment">// 需要和上一次枚举的数不相同</span><br>                <span class="hljs-keyword">if</span> (m &gt; i + <span class="hljs-number">1</span> &amp;&amp; nums[m] == nums[m - <span class="hljs-number">1</span>]) &#123;<br>                    <span class="hljs-keyword">continue</span>;<br>                &#125;<br>                <span class="hljs-keyword">if</span> (m == j)<br>                    <span class="hljs-keyword">break</span>;<br>                <span class="hljs-keyword">if</span> (nums[i] + nums[m] == -nums[j]) &#123;<br>                    List&lt;Integer&gt; subList = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>                    subList.add(nums[i]);<br>                    subList.add(nums[m]);<br>                    subList.add(nums[j]);<br>                    result.add(subList);<br>                &#125;<br>            &#125;<br><br>        &#125;<br>        <span class="hljs-keyword">return</span> result;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> leetcode面试150 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> 双指针 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>两数之和 II - 输入有序数组</title>
+      <link href="/2024/02/04/liang-shu-zhi-he-ii-shu-ru-you-xu-shu-zu/"/>
+      <url>/2024/02/04/liang-shu-zhi-he-ii-shu-ru-you-xu-shu-zu/</url>
+      
+        <content type="html"><![CDATA[<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>给你一个下标从 <strong>1</strong> 开始的整数数组 <code>numbers</code> ，该数组已按 <strong>非递减顺序排列</strong> ，请你从数组中找出满足相加之和等于目标数 <code>target</code> 的两个数。如果设这两个数分别是 <code>numbers[index1]</code> 和 <code>numbers[index2]</code> ，则 <code>1 &lt;= index1 &lt; index2 &lt;= numbers.length</code> 。</p><p>以长度为 2 的整数数组 <code>[index1, index2]</code> 的形式返回这两个整数的下标 <code>index1</code> 和 <code>index2</code>。</p><p>你可以假设每个输入 <strong>只对应唯一的答案</strong> ，而且你 <strong>不可以</strong> 重复使用相同的元素。</p><p>你所设计的解决方案必须只使用常量级的额外空间。</p><h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><p>双指针，初始时两个指针分别指向第一个元素位置和最后一个元素的位置。每次计算两个指针指向的两个元素之和，并和目标值比较。如果两个元素之和等于目标值，则发现了唯一解。如果两个元素之和小于目标值，则将左侧指针右移一位。如果两个元素之和大于目标值，则将右侧指针左移一位。移动指针之后，重复上述操作，直到找到答案。</p><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span>[] twoSum(<span class="hljs-type">int</span>[] numbers, <span class="hljs-type">int</span> target) &#123;<br>        <span class="hljs-type">int</span> p1=<span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> p2=numbers.length-<span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">while</span>(p1&lt;p2)&#123;<br>            <span class="hljs-keyword">if</span>(numbers[p1]+numbers[p2]==target)&#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[]&#123;p1+<span class="hljs-number">1</span>,p2+<span class="hljs-number">1</span>&#125;;<br>            &#125;<br>            <span class="hljs-keyword">if</span>(numbers[p1]+numbers[p2]&lt;target)&#123;<br>                p1++;<br>            &#125;<span class="hljs-keyword">else</span>&#123;<br>                p2--;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> leetcode面试150 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> 双指针 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>判断子序列</title>
+      <link href="/2024/02/04/pan-duan-zi-xu-lie/"/>
+      <url>/2024/02/04/pan-duan-zi-xu-lie/</url>
+      
+        <content type="html"><![CDATA[<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>给定字符串 <strong>s</strong> 和 <strong>t</strong> ，判断 <strong>s</strong> 是否为 <strong>t</strong> 的子序列。</p><p>字符串的一个子序列是原始字符串删除一些（也可以不删除）字符而<strong>不改变剩余字符相对位置</strong>形成的新字符串。（例如，<code>&quot;ace&quot;</code>是<code>&quot;abcde&quot;</code>的一个子序列，而<code>&quot;aec&quot;</code>不是）。</p><h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><h5 id="双指针、贪心"><a href="#双指针、贪心" class="headerlink" title="双指针、贪心"></a>双指针、贪心</h5><p>初始化两个指针<code>i</code>、<code>j</code>，分别指向数组<code>s</code>、<code>t</code>的初始位置，贪心地匹配，当匹配成功时，<code>i</code>、<code>j</code>同时右移一位，当匹配失败时，<code>i</code>位置不变，<code>j</code>右移一位，尝试用<code>t</code>数组的下一个字符匹配。</p><p>如果到最后<code>i</code>都不能走到<code>s</code>的末尾，证明<code>s</code>不是<code>t</code>的子序列，反之是子序列。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isSubsequence</span><span class="hljs-params">(String s, String t)</span> &#123;<br>        <span class="hljs-type">int</span> slength=s.length();<br>        <span class="hljs-type">int</span> tlength=t.length();<br>        <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>, j = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">while</span> (i &lt; slength &amp;&amp; j &lt; tlength) &#123;<br>            <span class="hljs-keyword">if</span> (s.charAt(i) == t.charAt(j)) &#123;<br>                i++;<br>            &#125;<br>            j++;<br>        &#125;<br>        <span class="hljs-keyword">return</span> i == slength;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure><h5 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h5><p>利用队列先进先出的性质，可以保持字符相对位置不变。</p><p>创建一个队列，然后将<code>s</code>的字符依次加入队列，遍历<code>t</code>,队列头部元素与字符相同时，pop该元素，验证下一个字符。如果到最后队列仍不为空，证明<code>s</code>不是<code>t</code>的子序列，反之是子序列。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isSubsequence</span><span class="hljs-params">(String s, String t)</span> &#123;<br>        <span class="hljs-keyword">if</span> (s.length() == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>        &#125;<br>        Deque&lt;Character&gt; queue = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayDeque</span>&lt;&gt;();<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; s.length(); i++) &#123;<br>            queue.offer(s.charAt(i));<br>        &#125;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; t.length(); i++) &#123;<br>            <span class="hljs-keyword">if</span> (queue.peek() == t.charAt(i)) &#123;<br>                queue.pop();<br>            &#125;<br>            <span class="hljs-keyword">if</span> (queue.isEmpty()) &#123;<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>            &#125;<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> leetcode面试150 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 贪心 </tag>
+            
+            <tag> 双指针 </tag>
+            
+            <tag> 队列 </tag>
+            
+            <tag> 字符串 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>除自身以外数组的乘积</title>
+      <link href="/2024/02/04/chu-zi-shen-yi-wai-shu-zu-de-cheng-ji/"/>
+      <url>/2024/02/04/chu-zi-shen-yi-wai-shu-zu-de-cheng-ji/</url>
+      
+        <content type="html"><![CDATA[<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>给你一个整数数组 <code>nums</code>，返回 <em>数组 <code>answer</code> ，其中 <code>answer[i]</code> 等于 <code>nums</code> 中除 <code>nums[i]</code> 之外其余各元素的乘积</em> 。</p><p>题目数据 <strong>保证</strong> 数组 <code>nums</code>之中任意元素的全部前缀元素和后缀的乘积都在 <strong>32 位</strong> 整数范围内。</p><p>请 <strong>不要使用除法，</strong>且在 <code>O(*n*)</code> 时间复杂度内完成此题。</p><h4 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h4><p>前缀积 后缀积</p><p>算出每个数之前的数的乘积&amp;每个数以后的数的乘积</p><p>得到两个数组，<code>nums[i]=left[i]*right[i]</code></p><h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br> <span class="hljs-keyword">public</span> <span class="hljs-type">int</span>[] productExceptSelf(<span class="hljs-type">int</span>[] nums) &#123;<br>        <span class="hljs-type">int</span> n=nums.length;<br>        <span class="hljs-type">int</span>[] left=<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[n];<br>        <span class="hljs-type">int</span>[] right=<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[n];<br>        <span class="hljs-type">int</span>[] answer=<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[n];<br>        left[<span class="hljs-number">0</span>]=<span class="hljs-number">1</span>;<br>        right[n-<span class="hljs-number">1</span>]=<span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;n;i++)&#123;<br>            left[i]=left[i-<span class="hljs-number">1</span>]*nums[i-<span class="hljs-number">1</span>];<br>        &#125;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> n-<span class="hljs-number">2</span>; i &gt;= <span class="hljs-number">0</span>; i--) &#123;<br>            right[i]=right[i+<span class="hljs-number">1</span>]*nums[i+<span class="hljs-number">1</span>];<br>        &#125;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;n;i++)&#123;<br>               answer[i]=left[i]*right[i];<br>        &#125;<br>        <span class="hljs-keyword">return</span> answer;<br>    &#125;<br>&#125;<br><br></code></pre></td></tr></table></figure><h4 id="进一步优化"><a href="#进一步优化" class="headerlink" title="进一步优化"></a>进一步优化</h4><p>进一步要求时间复杂度<code>O(1)</code> ,可以直接在answer数组上进行left的运算，然后设置一个常量<code>R</code>用来临时保存<code>right[i]</code>，在第二个循环时，将<code>answer[i]</code>与<code>R</code>相乘，这样由于输出数组不算进空间复杂度中，所以只需要常数空间来保存常量。</p><h4 id="空间优化后的代码"><a href="#空间优化后的代码" class="headerlink" title="空间优化后的代码"></a>空间优化后的代码</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span>[] productExceptSelf(<span class="hljs-type">int</span>[] nums) &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">length</span> <span class="hljs-operator">=</span> nums.length;<br>        <span class="hljs-type">int</span>[] answer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[length];<br><br>        <span class="hljs-comment">// answer[i] 表示索引 i 左侧所有元素的乘积</span><br>        <span class="hljs-comment">// 因为索引为 &#x27;0&#x27; 的元素左侧没有元素， 所以 answer[0] = 1</span><br>        answer[<span class="hljs-number">0</span>] = <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt; length; i++) &#123;<br>            answer[i] = nums[i - <span class="hljs-number">1</span>] * answer[i - <span class="hljs-number">1</span>];<br>        &#125;<br><br>        <span class="hljs-comment">// R 为右侧所有元素的乘积</span><br>        <span class="hljs-comment">// 刚开始右边没有元素，所以 R = 1</span><br>        <span class="hljs-type">int</span> <span class="hljs-variable">R</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> length - <span class="hljs-number">1</span>; i &gt;= <span class="hljs-number">0</span>; i--) &#123;<br>            <span class="hljs-comment">// 对于索引 i，左边的乘积为 answer[i]，右边的乘积为 R</span><br>            answer[i] = answer[i] * R;<br>            <span class="hljs-comment">// R 需要包含右边所有的乘积，所以计算下一个结果时需要将当前值乘到 R 上</span><br>            R *= nums[i];<br>        &#125;<br>        <span class="hljs-keyword">return</span> answer;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> leetcode面试150 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>H 指数</title>
+      <link href="/2024/02/04/h-zhi-shu/"/>
+      <url>/2024/02/04/h-zhi-shu/</url>
+      
+        <content type="html"><![CDATA[<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><p>给你一个整数数组 <code>citations</code> ，其中 <code>citations[i]</code> 表示研究者的第 i 篇论文被引用的次数。计算并返回该研究者的 <code>h</code> 指数。</p><p>根据维基百科上 h 指数的定义：h 代表“高引用次数” ，一名科研人员的 h 指数 是指他（她）至少发表了 <code>h</code> 篇论文，并且 至少 有 <code>h</code> 篇论文被引用次数大于等于 <code>h</code> 。如果 <code>h</code> 有多种可能的值，<code>h</code> 指数 是其中最大的那个。</p><h4 id="方法一：排序"><a href="#方法一：排序" class="headerlink" title="方法一：排序"></a>方法一：排序</h4><ol><li><p>先按照引用次数排序</p></li><li><p>根据 H 指数的定义，如果当前 H 指数为 <code>h</code> 并且在遍历过程中找到当前值 <code>citations[i]&gt;h</code>,当找到一篇引用次数大于<code>h</code>的文章，则<code>h</code>加一。继续遍历直到 hhh 无法继续增大。最后返回 h 作为最终答案。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span> &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">hIndex</span><span class="hljs-params">(<span class="hljs-type">int</span>[] citations)</span> &#123;<br>        Arrays.sort(citations);<br>        <span class="hljs-type">int</span> <span class="hljs-variable">h</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> citations.length-<span class="hljs-number">1</span>;<br>        <span class="hljs-keyword">while</span> (i &gt;= <span class="hljs-number">0</span> &amp;&amp; citations[i] &gt; h) &#123;<br>            h++;<br>            i--;<br>        &#125;<br>        <span class="hljs-keyword">return</span> h;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> leetcode面试150 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 排序 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>跳跃游戏</title>
       <link href="/2024/02/01/tiao-yue-you-xi/"/>
       <url>/2024/02/01/tiao-yue-you-xi/</url>
